@@ -1,10 +1,11 @@
 extern crate timer;
 
-use timer::timer::Timer;
 use std::io::Write;
-use std::{env, io, process, thread};
 use std::time::Duration;
+use std::{env, io, process, thread};
 
+use timer::beeper::Beeper;
+use timer::timer::Timer;
 
 fn main() {
   let args = env::args().collect::<Vec<_>>();
@@ -21,9 +22,11 @@ fn main() {
   }
 
   let tmr = Timer::new(minutes);
+  let beeper = Beeper::new();
 
   loop {
     if tmr.is_over() {
+      beeper.beep();
     }
 
     print!("\r{}", tmr.status());

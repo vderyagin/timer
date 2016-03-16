@@ -5,3 +5,5 @@ authors = ["Victor Deryagin <vderyagin@gmail.com>"]
 
 [dependencies]
 time = "*"
+ansi_term = "*"
+rodio = "*"
