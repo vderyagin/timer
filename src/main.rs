@@ -1,5 +1,6 @@
 extern crate timer;
 extern crate ansi_term;
+extern crate clap;
 
 use std::io::Write;
 use std::time::Duration;
