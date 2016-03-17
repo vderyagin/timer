@@ -1,8 +1,10 @@
 extern crate timer;
+extern crate ansi_term;
 
 use std::io::Write;
 use std::time::Duration;
 use std::{env, io, process, thread};
+use ansi_term::Colour::Red;
 
 use timer::beeper::Beeper;
 use timer::timer::Timer;
@@ -29,7 +31,13 @@ fn main() {
       beeper.beep();
     }
 
-    print!("\r{}", tmr.status());
+    print!("\r{}",
+           if tmr.is_over() {
+             Red.paint(tmr.status()).to_string()
+           } else {
+             tmr.status()
+           });
+
     io::stdout().flush().unwrap();
     thread::sleep(Duration::from_secs(60));
   };

@@ -1,5 +1,3 @@
-use ansi_term::Colour::Red;
-use std::string::ToString;
 use time::{Duration, SteadyTime};
 
 pub struct Timer {
@@ -20,15 +18,8 @@ impl Timer {
   }
 
   pub fn status(&self) -> String {
-    let time_elapsed = SteadyTime::now() - self.start;
-    let msg = format!("{} of {} minute(s) passed",
-                      time_elapsed.num_minutes(),
-                      self.duration.num_minutes());
-
-    if self.is_over() {
-      Red.paint(msg).to_string()
-    } else {
-      msg
-    }
+    format!("{} of {} minute(s) passed",
+            (SteadyTime::now() - self.start).num_minutes(),
+            self.duration.num_minutes())
   }
 }
