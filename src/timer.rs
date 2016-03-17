@@ -1,3 +1,4 @@
+use options::Options;
 use time::{Duration, SteadyTime};
 
 pub struct Timer {
@@ -7,10 +8,14 @@ pub struct Timer {
 
 impl Timer {
   pub fn new(minutes: i64) -> Self {
-    Timer{
+    Timer {
       start:    SteadyTime::now(),
       duration: Duration::minutes(minutes),
     }
+  }
+
+  pub fn from_args() -> Self {
+    Self::new(Options::new().duration.num_minutes())
   }
 
   pub fn is_over(&self) -> bool {
