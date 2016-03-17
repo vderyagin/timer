@@ -6,5 +6,6 @@ authors = ["Victor Deryagin <vderyagin@gmail.com>"]
 [dependencies]
 ansi_term = "*"
 clap = "*"
+regex = "*"
 rodio = "*"
 time = "*"

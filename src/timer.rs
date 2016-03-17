@@ -18,8 +18,12 @@ impl Timer {
   }
 
   pub fn status(&self) -> String {
-    format!("{} of {} minute(s) passed",
-            (SteadyTime::now() - self.start).num_minutes(),
-            self.duration.num_minutes())
+    format!("{}/{} passed",
+            format_duration(SteadyTime::now() - self.start),
+            format_duration(self.duration))
   }
+}
+
+fn format_duration(dur: Duration) -> String {
+  format!("{:02}:{:02}", dur.num_hours(), dur.num_minutes() % 60)
 }
