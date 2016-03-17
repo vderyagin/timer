@@ -37,6 +37,7 @@ fn main() {
 
   loop {
     if tmr.is_over() {
+      print!("\x07");
       beeper.beep();
     }
 
