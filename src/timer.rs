@@ -1,10 +1,13 @@
 use ansi_term::Colour::Red;
+use beeper::Beeper;
 use options::Options;
+use std::io::{Write, stdout};
 use time::{Duration, SteadyTime};
 
 pub struct Timer {
   start:    SteadyTime,
   duration: Duration,
+  beeper:   Beeper,
 }
 
 impl Timer {
@@ -12,6 +15,7 @@ impl Timer {
     Timer {
       start:    SteadyTime::now(),
       duration: Duration::minutes(minutes),
+      beeper:   Beeper::new(),
     }
   }
 
@@ -19,13 +23,13 @@ impl Timer {
     Self::new(Options::new().duration.num_minutes())
   }
 
-  pub fn is_over(&self) -> bool {
+  fn is_over(&self) -> bool {
     (SteadyTime::now() - self.start) >= self.duration
   }
 
-  pub fn status(&self) -> String {
+  fn status(&self) -> String {
     if self.is_over() {
-      Red.paint(format!("{} passed ({} overtime)",
+      Red.paint(format!("\x07{} passed ({} overtime)",
                         format_duration(self.elapsed_time()),
                         format_duration(self.overtime()))).to_string()
     } else {
@@ -41,6 +45,12 @@ impl Timer {
 
   fn overtime(&self) -> Duration {
     SteadyTime::now() - (self.start + self.duration)
+  }
+
+  pub fn tick(&self) {
+    if self.is_over() { self.beeper.beep() };
+    print!("\r{}", self.status());
+    stdout().flush().unwrap();
   }
 }
 
