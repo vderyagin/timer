@@ -1,3 +1,4 @@
+use ansi_term::Colour::Red;
 use options::Options;
 use time::{Duration, SteadyTime};
 
@@ -7,7 +8,7 @@ pub struct Timer {
 }
 
 impl Timer {
-  pub fn new(minutes: i64) -> Self {
+  fn new(minutes: i64) -> Self {
     Timer {
       start:    SteadyTime::now(),
       duration: Duration::minutes(minutes),
@@ -23,9 +24,23 @@ impl Timer {
   }
 
   pub fn status(&self) -> String {
-    format!("{}/{} passed",
-            format_duration(SteadyTime::now() - self.start),
-            format_duration(self.duration))
+    if self.is_over() {
+      Red.paint(format!("{} passed ({} overtime)",
+                        format_duration(self.elapsed_time()),
+                        format_duration(self.overtime()))).to_string()
+    } else {
+      format!("{} of {} passed",
+              format_duration(self.elapsed_time()),
+              format_duration(self.duration))
+    }
+  }
+
+  fn elapsed_time(&self) -> Duration {
+    SteadyTime::now() - self.start
+  }
+
+  fn overtime(&self) -> Duration {
+    SteadyTime::now() - (self.start + self.duration)
   }
 }
 
