@@ -29,14 +29,19 @@ impl Timer {
 
   fn status(&self) -> String {
     if self.is_over() {
-      Red.paint(format!("\x07{} passed ({} overtime)",
+      Red.paint(format!("\x07{} passed{}",
                         format_duration(self.elapsed_time()),
-                        format_duration(self.overtime()))).to_string()
+                        self.overtime_string())).to_string()
     } else {
       format!("{} of {} passed",
               format_duration(self.elapsed_time()),
               format_duration(self.duration))
     }
+  }
+
+  fn overtime_string(&self) -> String {
+    if self.overtime().num_minutes() <= 0 { return "".to_string() };
+    format!(" ({} overtime)", format_duration(self.overtime()))
   }
 
   fn elapsed_time(&self) -> Duration {
