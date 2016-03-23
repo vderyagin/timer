@@ -29,7 +29,7 @@ impl Timer {
 
   fn status(&self) -> String {
     if self.is_over() {
-      Red.paint(format!("\x07{} passed{}",
+      Red.paint(format!("\x07{} passed{}", // "\x07" beeps
                         format_duration(self.elapsed_time()),
                         self.overtime_string())).to_string()
     } else {
@@ -54,7 +54,9 @@ impl Timer {
 
   pub fn tick(&self) {
     if self.is_over() { self.beeper.beep() };
-    print!("\r{}", self.status());
+    print!("\r");                // return cursor to beginning of the line
+    print!("\x1b[K");            // clear line from cursor position to the end
+    print!("{}", self.status());
     stdout().flush().unwrap();
   }
 }
