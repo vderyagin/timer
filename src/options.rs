@@ -8,8 +8,8 @@ pub struct Options {
 
 impl Options {
   pub fn new() -> Self {
-    let matches = App::new("rnm")
-      .version("0.2.0")
+    let matches = App::new("timer")
+      .version("0.2.1")
       .author("Victor Deryagin <vderyagin@gmail.com>")
       .about("Timer with audio signal")
       .arg(Arg::with_name("DURATION")
