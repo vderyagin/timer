@@ -6,10 +6,10 @@ use timer::timer::Timer;
 
 fn main() {
   let timer = Timer::from_args();
-  let check_interval = Duration::from_secs(60);
+  let update_interval = Duration::from_secs(60);
 
   loop {
     timer.tick();
-    thread::sleep(check_interval);
+    thread::sleep(update_interval);
   };
 }
