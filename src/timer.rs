@@ -81,7 +81,7 @@ impl Timer {
   pub fn run(&self) {
     loop {
       self.tick();
-      sleep(time::Duration::from_secs(60))
+      sleep(time::Duration::from_secs(60));
     }
   }
 }
