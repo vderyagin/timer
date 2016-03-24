@@ -24,7 +24,7 @@ impl Timer {
   }
 
   fn is_over(&self) -> bool {
-    (SteadyTime::now() - self.start) >= self.duration
+    self.elapsed_time() >= self.duration
   }
 
   fn status(&self) -> String {
@@ -33,9 +33,10 @@ impl Timer {
                         format_duration(self.elapsed_time()),
                         self.overtime_string())).to_string()
     } else {
-      format!("{} of {} passed",
+      format!("{} of {} passed{}",
               format_duration(self.elapsed_time()),
-              format_duration(self.duration))
+              format_duration(self.duration),
+              self.time_left_string())
     }
   }
 
@@ -44,12 +45,22 @@ impl Timer {
     format!(" ({} overtime)", format_duration(self.overtime()))
   }
 
+  fn time_left_string(&self) -> String {
+    if self.elapsed_time().num_minutes() == 0 { return "".to_string() };
+    format!(" ({} left)", format_duration(self.time_left()))
+  }
+
   fn elapsed_time(&self) -> Duration {
     SteadyTime::now() - self.start
   }
 
+  fn time_left(&self) -> Duration {
+    // 200 milliseconds is to account for delay between now() calls
+    self.duration - self.elapsed_time() + Duration::milliseconds(200)
+  }
+
   fn overtime(&self) -> Duration {
-    SteadyTime::now() - (self.start + self.duration)
+    self.elapsed_time() - self.duration
   }
 
   pub fn tick(&self) {
