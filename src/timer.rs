@@ -81,12 +81,7 @@ impl Timer {
   pub fn run(&self) {
     loop {
       self.tick();
-
-      let minutes_passed = self.elapsed_time().num_minutes();
-      let drift = self.elapsed_time() - Duration::minutes(minutes_passed);
-      let sleep_time = Duration::minutes(1) - drift;
-
-      sleep(time::Duration::from_millis(sleep_time.num_milliseconds() as u64));
+      sleep(time::Duration::from_secs(60))
     }
   }
 }
