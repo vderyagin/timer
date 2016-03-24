@@ -2,6 +2,8 @@ use ansi_term::Colour::Red;
 use beeper::Beeper;
 use options::Options;
 use std::io::{Write, stdout};
+use std::thread::sleep;
+use std::time;
 use time::{Duration, SteadyTime};
 
 pub struct Timer {
@@ -63,12 +65,17 @@ impl Timer {
     self.elapsed_time() - self.duration
   }
 
-  pub fn tick(&self) {
+  fn tick(&self) {
     if self.is_over() { self.beeper.beep() };
     print!("\r");                // return cursor to beginning of the line
     print!("\x1b[K");            // clear line from cursor position to the end
     print!("{}", self.status());
     stdout().flush().unwrap();
+  }
+
+  pub fn run(&self) {
+    self.tick();
+    sleep(time::Duration::from_secs(60));
   }
 }
 
