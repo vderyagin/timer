@@ -31,7 +31,7 @@ impl Timer {
 
   fn status(&self) -> String {
     if self.is_over() {
-      Red.paint(format!("\x07{} passed{}", // "\x07" beeps
+      Red.paint(format!("{} passed{}",
                         format_duration(self.elapsed_time()),
                         self.overtime_string())).to_string()
     } else {
@@ -57,8 +57,8 @@ impl Timer {
   }
 
   fn time_left(&self) -> Duration {
-    // 200 milliseconds is to account for delay between now() calls
-    self.duration - self.elapsed_time() + Duration::milliseconds(200)
+    // 50 milliseconds is to account for delay between now() calls
+    self.duration - self.elapsed_time() + Duration::milliseconds(50)
   }
 
   fn overtime(&self) -> Duration {
@@ -66,16 +66,28 @@ impl Timer {
   }
 
   fn tick(&self) {
-    if self.is_over() { self.beeper.beep() };
+    if self.is_over() {
+      self.beeper.beep();
+      print!("\x07");                     // beep
+    };
+
     print!("\r");                // return cursor to beginning of the line
     print!("\x1b[K");            // clear line from cursor position to the end
+
     print!("{}", self.status());
     stdout().flush().unwrap();
   }
 
   pub fn run(&self) {
-    self.tick();
-    sleep(time::Duration::from_secs(60));
+    loop {
+      self.tick();
+
+      let minutes_passed = self.elapsed_time().num_minutes();
+      let drift = self.elapsed_time() - Duration::minutes(minutes_passed);
+      let sleep_time = Duration::minutes(1) - drift;
+
+      sleep(time::Duration::from_millis(sleep_time.num_milliseconds() as u64));
+    }
   }
 }
 
