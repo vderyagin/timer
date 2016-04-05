@@ -44,21 +44,14 @@ impl Timer {
   }
 
   fn overtime_string(&self) -> String {
-    if self.overtime().num_minutes() <= 0 { return "".to_string() };
-    format!(" ({} overtime)", format_duration(self.overtime()))
+    let overtime = self.passed - self.duration;
+    if overtime.num_minutes() <= 0 { return "".to_string() };
+    format!(" ({} overtime)", format_duration(overtime))
   }
 
   fn time_left_string(&self) -> String {
     if self.passed.num_minutes() == 0 { return "".to_string() };
-    format!(" ({} left)", format_duration(self.time_left()))
-  }
-
-  fn time_left(&self) -> Duration {
-    self.duration - self.passed
-  }
-
-  fn overtime(&self) -> Duration {
-    self.passed - self.duration
+    format!(" ({} left)", format_duration(self.duration - self.passed))
   }
 
   fn tick(&mut self) {
