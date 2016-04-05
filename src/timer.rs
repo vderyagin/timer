@@ -2,13 +2,13 @@ use ansi_term::Colour::Red;
 use beeper::Beeper;
 use options::Options;
 use std::io::{Write, stdout};
-use std::thread::sleep;
-use std::time;
+use std::{thread, time};
 use time::{Duration, SteadyTime};
 
 pub struct Timer {
   start:    SteadyTime,
   duration: Duration,
+  passed:   Duration,
   beeper:   Beeper,
 }
 
@@ -17,6 +17,7 @@ impl Timer {
     Timer {
       start:    SteadyTime::now(),
       duration: Duration::minutes(minutes),
+      passed:   Duration::minutes(0),
       beeper:   Beeper::new(),
     }
   }
@@ -26,17 +27,17 @@ impl Timer {
   }
 
   fn is_over(&self) -> bool {
-    self.elapsed_time() >= self.duration
+    self.passed >= self.duration
   }
 
   fn status(&self) -> String {
     if self.is_over() {
       Red.paint(format!("{} passed{}",
-                        format_duration(self.elapsed_time()),
+                        format_duration(self.passed),
                         self.overtime_string())).to_string()
     } else {
       format!("{} of {} passed{}",
-              format_duration(self.elapsed_time()),
+              format_duration(self.passed),
               format_duration(self.duration),
               self.time_left_string())
     }
@@ -48,24 +49,19 @@ impl Timer {
   }
 
   fn time_left_string(&self) -> String {
-    if self.elapsed_time().num_minutes() == 0 { return "".to_string() };
+    if self.passed.num_minutes() == 0 { return "".to_string() };
     format!(" ({} left)", format_duration(self.time_left()))
   }
 
-  fn elapsed_time(&self) -> Duration {
-    SteadyTime::now() - self.start
-  }
-
   fn time_left(&self) -> Duration {
-    // 50 milliseconds is to account for delay between now() calls
-    self.duration - self.elapsed_time() + Duration::milliseconds(50)
+    self.duration - self.passed
   }
 
   fn overtime(&self) -> Duration {
-    self.elapsed_time() - self.duration
+    self.passed - self.duration
   }
 
-  fn tick(&self) {
+  fn tick(&mut self) {
     if self.is_over() {
       self.beeper.beep();
       print!("\x07");                     // beep
@@ -78,10 +74,16 @@ impl Timer {
     stdout().flush().unwrap();
   }
 
-  pub fn run(&self) {
+  fn sleep(&self) {
+    let dur = self.start + self.passed + Duration::minutes(1) - SteadyTime::now();
+    thread::sleep(time::Duration::from_millis(dur.num_milliseconds() as u64));
+  }
+
+  pub fn run(&mut self) {
     loop {
       self.tick();
-      sleep(time::Duration::from_secs(60));
+      self.sleep();
+      self.passed = self.passed + Duration::minutes(1);
     }
   }
 }
