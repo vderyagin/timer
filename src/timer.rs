@@ -6,28 +6,28 @@ use std::{thread, time};
 use time::{Duration, SteadyTime};
 
 pub struct Timer {
-  start:    SteadyTime,
-  duration: Duration,
-  passed:   Duration,
-  beeper:   Beeper,
+  beeper:  Beeper,
+  options: Options,
+  passed:  Duration,
+  start:   SteadyTime,
 }
 
 impl Timer {
-  fn new(minutes: i64) -> Self {
+  fn new(options: Options) -> Self {
     Timer {
-      start:    SteadyTime::now(),
-      duration: Duration::minutes(minutes),
-      passed:   Duration::minutes(0),
-      beeper:   Beeper::new(),
+      start:   SteadyTime::now(),
+      options: options,
+      passed:  Duration::minutes(0),
+      beeper:  Beeper::new(),
     }
   }
 
   pub fn from_args() -> Self {
-    Self::new(Options::new().duration.num_minutes())
+    Self::new(Options::new())
   }
 
   fn is_over(&self) -> bool {
-    self.passed >= self.duration
+    self.passed >= self.options.duration
   }
 
   fn status(&self) -> String {
@@ -38,33 +38,41 @@ impl Timer {
     } else {
       format!("{} of {} passed{}",
               format_duration(self.passed),
-              format_duration(self.duration),
+              format_duration(self.options.duration),
               self.time_left_string())
     }
   }
 
   fn overtime_string(&self) -> String {
-    let overtime = self.passed - self.duration;
+    let overtime = self.passed - self.options.duration;
     if overtime.num_minutes() <= 0 { return "".to_string() };
     format!(" ({} overtime)", format_duration(overtime))
   }
 
   fn time_left_string(&self) -> String {
     if self.passed.num_minutes() == 0 { return "".to_string() };
-    format!(" ({} left)", format_duration(self.duration - self.passed))
+    format!(" ({} left)", format_duration(self.options.duration - self.passed))
+  }
+
+  fn maybe_beep(&self) {
+    let overtime = (self.passed - self.options.duration).num_minutes();
+    let interval = self.options.beep_interval.num_minutes();
+    if self.is_over() && (overtime % interval == 0) {
+      self.beeper.beep();
+      print!("\x07");
+    }
+  }
+
+  fn update_status_display(&self) {
+    print!("\r");                // return cursor to beginning of the line
+    print!("\x1b[K");            // clear line from cursor position to the end
+    print!("{}", self.status());
+    stdout().flush().unwrap();
   }
 
   fn tick(&mut self) {
-    if self.is_over() {
-      self.beeper.beep();
-      print!("\x07");                     // beep
-    };
-
-    print!("\r");                // return cursor to beginning of the line
-    print!("\x1b[K");            // clear line from cursor position to the end
-
-    print!("{}", self.status());
-    stdout().flush().unwrap();
+    self.maybe_beep();
+    self.update_status_display();
   }
 
   fn sleep(&self) {
