@@ -3,7 +3,8 @@ use regex::Regex;
 use time::Duration;
 
 pub struct Options {
-  pub duration: Duration,
+  pub duration:      Duration,
+  pub beep_interval: Duration,
 }
 
 impl Options {
@@ -16,6 +17,13 @@ impl Options {
            .default_value("00:30")
            .help("Timer duration")
            .validator(validate_time_string))
+      .arg(Arg::with_name("beep-interval")
+           .takes_value(true)
+           .default_value("3")
+           .short("b")
+           .long("beep-interval")
+           .help("Interval between beeps (in minutes) after time runs out")
+           .validator(validate_integer))
       .get_matches();
 
     let duration_spec = matches.value_of("DURATION").unwrap();
@@ -24,8 +32,11 @@ impl Options {
     let hours = captures.name("hours").unwrap_or("0").parse().unwrap();
     let minutes = captures.name("minutes").unwrap().parse().unwrap();
 
+    let beep_interval = matches.value_of("beep-interval").unwrap().parse().unwrap();
+
     Options {
-      duration: Duration::hours(hours) + Duration::minutes(minutes)
+      duration:      Duration::hours(hours) + Duration::minutes(minutes),
+      beep_interval: Duration::minutes(beep_interval),
     }
   }
 }
@@ -54,5 +65,13 @@ fn validate_time_string(time_string: String) -> Result<(), String> {
     }
   } else {
     Err(format!("'{}' is not a valid duration, use hh:mm or mm format", time_string))
+  }
+}
+
+fn validate_integer(input: String) -> Result<(), String> {
+  if digits_re().is_match(input.as_str()) {
+    Ok(())
+  } else {
+    Err(format!("'{}' is not an integer", input))
   }
 }
