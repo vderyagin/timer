@@ -6,5 +6,6 @@ extern crate time;
 
 mod beeper;
 mod options;
+mod timer_message_formatter;
 
 pub mod timer;
