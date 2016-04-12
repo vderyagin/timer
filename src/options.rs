@@ -10,7 +10,7 @@ pub struct Options {
 impl Options {
   pub fn new() -> Self {
     let matches = App::new("timer")
-      .version("0.2.1")
+      .version("0.2.2")
       .author("Victor Deryagin <vderyagin@gmail.com>")
       .about("Timer with audio signal")
       .arg(Arg::with_name("DURATION")
