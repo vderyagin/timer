@@ -14,12 +14,12 @@ pub struct Timer {
 
 impl Timer {
   pub fn from_args() -> Self {
-    Self::new(Options::new())
+    Self::new(Default::default())
   }
 
   fn new(options: Options) -> Self {
     Timer {
-      beeper:            Beeper::new(),
+      beeper:            Default::default(),
       message_formatter: TimerMessageFormatter::new(options.duration),
       options:           options,
       start:             SteadyTime::now(),

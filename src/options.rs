@@ -7,8 +7,8 @@ pub struct Options {
   pub beep_interval: Duration,
 }
 
-impl Options {
-  pub fn new() -> Self {
+impl Default for Options {
+  fn default() -> Options {
     let matches = App::new("timer")
       .version("0.2.2")
       .author("Victor Deryagin <vderyagin@gmail.com>")
