@@ -1,6 +1,6 @@
 use ansi_term::{Colour, Style};
-use std::io::{Write, stdout};
 use time::Duration;
+use terminal;
 
 pub struct TimerMessageFormatter {
   total: Duration,
@@ -38,10 +38,7 @@ impl TimerMessageFormatter {
 
   pub fn print_message_after(&self, passed: Duration) {
     let msg = self.output_style(passed).paint(self.message_after(passed)).to_string();
-    print!("\r");                // return cursor to beginning of the line
-    print!("\x1b[K");            // clear line from cursor position to the end
-    print!("{}", msg);
-    stdout().flush().unwrap();
+    terminal::update_message(&msg);
   }
 }
 

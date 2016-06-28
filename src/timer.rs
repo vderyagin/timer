@@ -1,6 +1,7 @@
 use std::thread;
 use time::{Duration, SteadyTime};
 
+use terminal;
 use beeper::Beeper;
 use options::Options;
 use timer_message_formatter::TimerMessageFormatter;
@@ -39,7 +40,7 @@ impl Timer {
     let interval_minutes = self.options.beep_interval.num_minutes();
     if (overtime_minutes >= 0) && (overtime_minutes % interval_minutes == 0) {
       self.beeper.beep();
-      print!("\x07");
+      terminal::bell();
     }
   }
 
