@@ -45,6 +45,9 @@ impl Timer {
   }
 
   fn sleep_until(&self, time: SteadyTime) {
-    thread::sleep((time - SteadyTime::now()).to_std().unwrap())
+    let now = SteadyTime::now();
+    if time > now {
+      thread::sleep((time - now).to_std().unwrap());
+    }
   }
 }
