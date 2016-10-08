@@ -7,5 +7,5 @@ authors = ["Victor Deryagin <vderyagin@gmail.com>"]
 ansi_term = "*"
 clap = "*"
 regex = "*"
-rodio = "0.3.3"
+rodio = "*"
 time = "*"
