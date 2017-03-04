@@ -29,8 +29,8 @@ impl Default for Options {
     let duration_spec = matches.value_of("DURATION").unwrap();
     let captures = duration_spec_re().captures(duration_spec).unwrap();
 
-    let hours = captures.name("hours").unwrap_or("0").parse().unwrap();
-    let minutes = captures.name("minutes").unwrap().parse().unwrap();
+    let hours = captures.name("hours").map(|m| m.as_str()).unwrap_or("0").parse().unwrap();
+    let minutes = captures.name("minutes").map(|m| m.as_str()).unwrap().parse().unwrap();
 
     let beep_interval = matches.value_of("beep-interval").unwrap().parse().unwrap();
 
@@ -55,7 +55,7 @@ fn validate_time_string(time_string: String) -> Result<(), String> {
   } else if duration_spec_re().is_match(time_string.as_str()) {
     let minutes = duration_spec_re()
       .captures(time_string.as_str()).unwrap()
-      .name("minutes").unwrap()
+      .name("minutes").map(|m| m.as_str()).unwrap()
       .parse::<usize>().unwrap();
 
     if minutes > 59 {
