@@ -28,7 +28,7 @@ impl Default for Options {
       .arg(Arg::with_name("quiet")
            .short("q")
            .long("quiet")
-           .help("Don't show any output"))
+           .help("Don't show any output text (still beeps)"))
       .get_matches();
 
     let duration_spec = matches.value_of("DURATION").unwrap();
