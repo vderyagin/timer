@@ -5,6 +5,7 @@ use time::Duration;
 pub struct Options {
   pub duration:      Duration,
   pub beep_interval: Duration,
+  pub quiet:         bool,
 }
 
 impl Default for Options {
@@ -24,6 +25,10 @@ impl Default for Options {
            .long("beep-interval")
            .help("Interval between beeps (in minutes) after time runs out")
            .validator(validate_integer))
+      .arg(Arg::with_name("quiet")
+           .short("q")
+           .long("quiet")
+           .help("Don't show any output"))
       .get_matches();
 
     let duration_spec = matches.value_of("DURATION").unwrap();
@@ -37,6 +42,7 @@ impl Default for Options {
     Options {
       duration:      Duration::hours(hours) + Duration::minutes(minutes),
       beep_interval: Duration::minutes(beep_interval),
+      quiet:         matches.is_present("quiet"),
     }
   }
 }

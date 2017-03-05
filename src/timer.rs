@@ -30,7 +30,9 @@ impl Timer {
   pub fn run(&self) {
     for time_passed in (0..).map(Duration::minutes) {
       self.maybe_beep(time_passed);
-      self.message_formatter.print_message_after(time_passed);
+      if !self.options.quiet {
+        self.message_formatter.print_message_after(time_passed);
+      }
       self.sleep_until(self.start + time_passed + Duration::minutes(1));
     }
   }
