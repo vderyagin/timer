@@ -1,4 +1,4 @@
-use rodio::{Sink, Decoder, get_default_endpoint};
+use rodio::{Sink, Decoder, default_endpoint};
 use std::io::Cursor;
 
 const SOUND: &'static [u8] = include_bytes!("beep.ogg");
@@ -19,7 +19,7 @@ impl Beeper {
 
 impl Default for Beeper {
   fn default() -> Beeper {
-    let endpoint = get_default_endpoint().unwrap();
+    let endpoint = default_endpoint().unwrap();
     let mut sink = Sink::new(&endpoint);
     sink.set_volume(0.3);
 
