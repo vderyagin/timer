@@ -20,7 +20,7 @@ impl Beeper {
 impl Default for Beeper {
   fn default() -> Beeper {
     let endpoint = default_output_device().unwrap();
-    let mut sink = Sink::new(&endpoint);
+    let sink = Sink::new(&endpoint);
     sink.set_volume(0.3);
 
     Beeper{sink: sink}

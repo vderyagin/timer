@@ -1,5 +1,7 @@
 use std::thread;
-use time::{Duration, SteadyTime};
+use std::convert::TryFrom;
+use std::time::Duration as StdDuration;
+use time::{Duration, Instant};
 
 use terminal;
 use beeper::Beeper;
@@ -10,7 +12,7 @@ pub struct Timer {
   beeper:            Beeper,
   message_formatter: TimerMessageFormatter,
   options:           Options,
-  start:             SteadyTime,
+  start:             Instant,
 }
 
 impl Timer {
@@ -23,7 +25,7 @@ impl Timer {
       beeper:            Default::default(),
       message_formatter: TimerMessageFormatter::new(options.duration),
       options:           options,
-      start:             SteadyTime::now(),
+      start:             Instant::now(),
     }
   }
 
@@ -38,18 +40,18 @@ impl Timer {
   }
 
   fn maybe_beep(&self, passed: Duration) {
-    let overtime_minutes = (passed - self.options.duration).num_minutes();
-    let interval_minutes = self.options.beep_interval.num_minutes();
+    let overtime_minutes = (passed - self.options.duration).whole_minutes();
+    let interval_minutes = self.options.beep_interval.whole_minutes();
     if (overtime_minutes >= 0) && (overtime_minutes % interval_minutes == 0) {
       self.beeper.beep();
       terminal::bell();
     }
   }
 
-  fn sleep_until(&self, time: SteadyTime) {
-    let now = SteadyTime::now();
+  fn sleep_until(&self, time: Instant) {
+    let now = Instant::now();
     if time > now {
-      thread::sleep((time - now).to_std().unwrap());
+      thread::sleep(StdDuration::try_from(time - now).unwrap());
     }
   }
 }

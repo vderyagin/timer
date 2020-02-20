@@ -25,11 +25,11 @@ impl TimerMessageFormatter {
 
     msg.push_str(" passed");
 
-    if (passed.num_minutes() > 0) && (overtime.num_minutes() < 0) {
+    if (passed.whole_minutes() > 0) && (overtime.whole_minutes() < 0) {
       msg.push_str(format!(" ({} left)", format_duration(-overtime)).as_str());
     }
 
-    if overtime.num_minutes() > 0 {
+    if overtime.whole_minutes() > 0 {
       msg.push_str(format!(" ({} overtime)", format_duration(overtime)).as_str());
     }
 
@@ -43,7 +43,7 @@ impl TimerMessageFormatter {
 }
 
 fn format_duration(dur: Duration) -> String {
-  format!("{:02}:{:02}", dur.num_hours(), dur.num_minutes() % 60)
+  format!("{:02}:{:02}", dur.whole_hours(), dur.whole_minutes() % 60)
 }
 
 #[cfg(test)]
