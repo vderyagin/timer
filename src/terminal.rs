@@ -1,12 +1,12 @@
-use std::io::{Write, stdout};
+use std::io::{stdout, Write};
 
 pub fn update_message(msg: &str) {
-  print!("\r");                // move cursor to beginning of the line
-  print!("\x1b[K");            // clear line from cursor position to the end
-  print!("{}", msg);
-  stdout().flush().unwrap();
+    print!("\r"); // move cursor to beginning of the line
+    print!("\x1b[K"); // clear line from cursor position to the end
+    print!("{}", msg);
+    stdout().flush().unwrap();
 }
 
 pub fn bell() {
-  print!("\x07");
+    print!("\x07");
 }
