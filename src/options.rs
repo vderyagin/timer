@@ -6,6 +6,7 @@ pub struct Options {
     pub duration: Duration,
     pub beep_interval: Duration,
     pub quiet: bool,
+    pub test: bool,
 }
 
 impl Default for Options {
@@ -35,6 +36,12 @@ impl Default for Options {
                     .long("quiet")
                     .help("Don't show any output text (still beeps)"),
             )
+            .arg(
+                Arg::with_name("test")
+                    .short("t")
+                    .long("test")
+                    .help("Just beep once and exit (to test sound volume)"),
+            )
             .get_matches();
 
         let duration_spec = matches.value_of("DURATION").unwrap();
@@ -59,6 +66,7 @@ impl Default for Options {
             duration: Duration::hours(hours) + Duration::minutes(minutes),
             beep_interval: Duration::minutes(beep_interval),
             quiet: matches.is_present("quiet"),
+            test: matches.is_present("test"),
         }
     }
 }

@@ -30,6 +30,13 @@ impl Timer {
     }
 
     pub fn run(&self) {
+        if self.options.test {
+            self.beeper.beep(); // TODO: block until sound finishes playing
+            terminal::bell();
+            thread::sleep(StdDuration::from_millis(500));
+            return;
+        }
+
         for time_passed in (0..).map(Duration::minutes) {
             self.maybe_beep(time_passed);
             if !self.options.quiet {
