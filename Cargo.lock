@@ -582,7 +582,7 @@ dependencies = [
 
 [[package]]
 name = "timer"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "ansi_term 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.33.3 (registry+https://github.com/rust-lang/crates.io-index)",
