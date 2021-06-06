@@ -1,28 +1,12 @@
-use rodio::{default_output_device, Decoder, Sink};
-use std::io::Cursor;
+use rodio::{OutputStream, Sink};
+use rodio::source::{SineWave, Source};
+use std::time::Duration;
 
-const SOUND: &'static [u8] = include_bytes!("beep.ogg");
+pub fn beep() {
+    let source = SineWave::new(440).take_duration(Duration::from_secs_f32(0.4)).amplify(0.50);
+    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+    let sink = Sink::try_new(&stream_handle).unwrap();
 
-pub struct Beeper {
-    sink: Sink,
-}
-
-impl Beeper {
-    pub fn beep(&self) {
-        self.sink.append(self.decoder());
-    }
-
-    fn decoder(&self) -> Decoder<Cursor<&'static [u8]>> {
-        Decoder::new(Cursor::new(SOUND)).unwrap()
-    }
-}
-
-impl Default for Beeper {
-    fn default() -> Beeper {
-        let endpoint = default_output_device().unwrap();
-        let sink = Sink::new(&endpoint);
-        sink.set_volume(0.3);
-
-        Beeper { sink: sink }
-    }
+    sink.append(source);
+    sink.sleep_until_end();
 }
