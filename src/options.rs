@@ -12,7 +12,7 @@ pub struct Options {
 impl Default for Options {
     fn default() -> Options {
         let matches = App::new("timer")
-            .version("0.2.2")
+            .version("0.3.0")
             .author("Victor Deryagin <vderyagin@gmail.com>")
             .about("Timer with audio signal")
             .arg(
