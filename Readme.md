@@ -4,7 +4,7 @@ CLI timer. Beeps after set period of time passes, beeps periodically (every 3 mi
 
 ## Installation
 ```sh
-cargo install --git https://github.com/vderyagin/timer.git
+cargo install --git https://github.com/vderyagin/timer
 ```
 
 ## Usage
