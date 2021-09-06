@@ -1,3 +1,13 @@
+## About
+
+CLI timer. Beeps after set period of time passes, beeps periodically (every 3 minutes, customizable) after that until you ^C it.
+
+## Installation
+```sh
+cargo install --git https://github.com/vderyagin/timer.git
+```
+
+## Usage
 ```
 Timer with audio signal
 
