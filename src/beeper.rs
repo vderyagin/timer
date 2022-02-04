@@ -3,7 +3,7 @@ use rodio::{OutputStream, Sink};
 use std::time::Duration;
 
 pub fn beep() {
-    let source = SineWave::new(440)
+    let source = SineWave::new(440.0)
         .take_duration(Duration::from_secs_f32(0.4))
         .amplify(0.50);
     let (_stream, stream_handle) = OutputStream::try_default().unwrap();
