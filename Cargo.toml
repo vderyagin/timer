@@ -5,7 +5,7 @@ authors = ["Victor Deryagin <vderyagin@gmail.com>"]
 
 [dependencies]
 ansi_term = "*"
-clap = "2.*"
+clap = { version = "*", features = ["derive"] }
 regex = "*"
 rodio = "*"
 time = "*"
