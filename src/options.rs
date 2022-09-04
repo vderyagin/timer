@@ -1,6 +1,6 @@
+use clap::Parser;
 use regex::Regex;
 use time::Duration;
-use clap::Parser;
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
