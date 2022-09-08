@@ -26,7 +26,10 @@ pub struct Options {
 fn parse_duration(input: &str) -> Result<Duration, String> {
     let re = Regex::new(r"^((?P<hours>\d+):)?(?P<minutes>\d+)$").unwrap();
 
-    let captures = re.captures(input).unwrap();
+    let captures = re.captures(input).ok_or(format!(
+        "'{}' is not a valid duration, use hh:mm or mm format",
+        input
+    ))?;
 
     let hours = captures
         .name("hours")
@@ -42,11 +45,23 @@ fn parse_duration(input: &str) -> Result<Duration, String> {
         .parse()
         .unwrap();
 
+    if captures.name("hours").is_some() && minutes > 59 {
+        return Err("You can't specify more then 59 minutes in hh:mm format".to_string());
+    }
+
     Ok(Duration::hours(hours) + Duration::minutes(minutes))
 }
 
 fn parse_beep_interval(input: &str) -> Result<Duration, String> {
-    Ok(Duration::minutes(input.parse().unwrap()))
+    let minutes = input
+        .parse()
+        .or(Err(format!("'{}' is not a valid integer", input)))?;
+
+    if minutes == 0 {
+        return Err("beep interval can't be zero".to_string());
+    }
+
+    Ok(Duration::minutes(minutes))
 }
 
 impl Default for Options {
@@ -55,40 +70,72 @@ impl Default for Options {
     }
 }
 
-// fn digits_re() -> Regex {
-//     Regex::new(r"^\d+$").unwrap()
-// }
+#[cfg(test)]
+mod tests {
+    mod parse_beep_interval {
+        use super::super::parse_beep_interval;
 
-// fn validate_time_string(time_string: String) -> Result<(), String> {
-//     if digits_re().is_match(time_string.as_str()) {
-//         Ok(())
-//     } else if duration_spec_re().is_match(time_string.as_str()) {
-//         let minutes = duration_spec_re()
-//             .captures(time_string.as_str())
-//             .unwrap()
-//             .name("minutes")
-//             .map(|m| m.as_str())
-//             .unwrap()
-//             .parse::<usize>()
-//             .unwrap();
+        #[test]
+        fn accepts_integers() {
+            assert!(parse_beep_interval("14").is_ok());
+            assert!(parse_beep_interval("1").is_ok());
+            assert!(parse_beep_interval("333").is_ok());
+        }
 
-//         if minutes > 59 {
-//             Err("You can't specify more then 59 minutes in hh:mm format".to_string())
-//         } else {
-//             Ok(())
-//         }
-//     } else {
-//         Err(format!(
-//             "'{}' is not a valid duration, use hh:mm or mm format",
-//             time_string
-//         ))
-//     }
-// }
+        #[test]
+        fn does_not_accept_zero() {
+            assert!(parse_beep_interval("0").is_err());
+        }
 
-// fn validate_integer(input: String) -> Result<(), String> {
-//     if digits_re().is_match(input.as_str()) {
-//         Ok(())
-//     } else {
-//         Err(format!("'{}' is not an integer", input))
-//     }
-// }
+        #[test]
+        fn does_not_accept_any_funny_formats() {
+            assert!(parse_beep_interval("3:33").is_err());
+        }
+    }
+
+    mod parse_duration {
+        use super::super::parse_duration;
+
+        #[test]
+        fn parses_hh_mm_format() {
+            assert!(parse_duration("12:34").is_ok());
+            assert!(parse_duration("1:32").is_ok());
+            assert!(parse_duration("01:12").is_ok());
+        }
+
+        #[test]
+        fn parses_mm_format() {
+            assert!(parse_duration("1").is_ok());
+            assert!(parse_duration("98").is_ok());
+            assert!(parse_duration("1123").is_ok());
+        }
+
+        #[test]
+        fn general_format_validation() {
+            assert!(parse_duration("aaa").is_err());
+        }
+
+        #[test]
+        fn at_most_59_minutes_in_hh_mm_format() {
+            assert!(parse_duration("1:59").is_ok());
+            assert!(parse_duration("1:60").is_err());
+        }
+
+        #[test]
+        fn can_have_any_number_of_minutes_in_mm_format() {
+            assert!(parse_duration("99999").is_ok());
+            assert_eq!(parse_duration("80"), parse_duration("1:20"));
+        }
+
+        #[test]
+        fn cant_specify_just_hours() {
+            assert!(parse_duration("1:").is_err());
+            assert!(parse_duration("1:0").is_ok());
+        }
+
+        #[test]
+        fn leading_zeroes_dont_hurt() {
+            assert_eq!(parse_duration("1:2"), parse_duration("00001:0000002"));
+        }
+    }
+}
