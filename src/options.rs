@@ -55,7 +55,7 @@ fn parse_duration(input: &str) -> Result<Duration, String> {
 fn parse_beep_interval(input: &str) -> Result<Duration, String> {
     let minutes = input
         .parse()
-        .or(Err(format!("'{}' is not a valid integer", input)))?;
+        .map_err(|_| format!("'{}' is not a valid integer", input))?;
 
     if minutes == 0 {
         return Err("beep interval can't be zero".to_string());

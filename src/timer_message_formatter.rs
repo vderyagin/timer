@@ -8,7 +8,7 @@ pub struct TimerMessageFormatter {
 
 impl TimerMessageFormatter {
     pub fn new(total: Duration) -> Self {
-        TimerMessageFormatter { total: total }
+        TimerMessageFormatter { total }
     }
 
     fn output_style(&self, passed: Duration) -> Style {
@@ -21,7 +21,7 @@ impl TimerMessageFormatter {
 
     fn message_after(&self, passed: Duration) -> String {
         let overtime = passed - self.total;
-        let mut msg = String::from(format_duration(passed));
+        let mut msg = format_duration(passed);
 
         if passed < self.total {
             msg.push_str(format!(" of {}", format_duration(self.total)).as_str());

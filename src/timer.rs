@@ -22,7 +22,7 @@ impl Timer {
     fn new(options: Options) -> Self {
         Timer {
             message_formatter: TimerMessageFormatter::new(options.duration),
-            options: options,
+            options,
             start: Instant::now(),
         }
     }
