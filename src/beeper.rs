@@ -9,7 +9,7 @@ pub fn beep() {
     let source = SineWave::new(BEEP_FREQUENCY)
         .take_duration(Duration::from_secs_f32(BEEP_DURATION))
         .amplify(0.50);
-    let stream_handle = OutputStreamBuilder::open_default_stream().unwrap();
+    let stream_handle = OutputStreamBuilder::open_default_stream().expect("Failed to open audio output stream");
     let sink = Sink::connect_new(&stream_handle.mixer());
 
     sink.append(source);

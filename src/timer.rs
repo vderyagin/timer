@@ -55,7 +55,7 @@ impl Timer {
     fn sleep_until(&self, time: Instant) {
         let now = Instant::now();
         if time > now {
-            thread::sleep(StdDuration::try_from(time - now).unwrap());
+            thread::sleep(StdDuration::try_from(time - now).expect("Failed to convert duration"));
         }
     }
 }
