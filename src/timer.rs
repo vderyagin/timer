@@ -3,10 +3,10 @@ use std::thread;
 use std::time::Duration as StdDuration;
 use time::{Duration, Instant};
 
-use beeper::beep;
-use options::Options;
-use terminal;
-use timer_message_formatter::TimerMessageFormatter;
+use crate::beeper::beep;
+use crate::options::Options;
+use crate::terminal;
+use crate::timer_message_formatter::TimerMessageFormatter;
 
 pub struct Timer {
     message_formatter: TimerMessageFormatter,

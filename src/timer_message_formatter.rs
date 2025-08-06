@@ -1,5 +1,5 @@
 use ansi_term::{Colour, Style};
-use terminal;
+use crate::terminal;
 use time::Duration;
 
 pub struct TimerMessageFormatter {
