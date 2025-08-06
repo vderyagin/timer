@@ -1,4 +1,4 @@
-use std::io::{stdout, Write};
+use std::io::{Write, stdout};
 
 const CURSOR_TO_START: &str = "\r";
 const CLEAR_LINE: &str = "\x1b[K";
