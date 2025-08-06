@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
 use std::thread;
-use std::time::Duration as StdDuration;
-use time::{Duration, Instant};
+use std::time::{Duration as StdDuration, Instant};
+use time::Duration;
 
 use crate::beeper::beep;
 use crate::options::Options;
