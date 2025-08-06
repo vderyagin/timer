@@ -46,7 +46,7 @@ fn parse_duration(input: &str) -> Result<Duration, String> {
         .unwrap();
 
     if captures.name("hours").is_some() && minutes > 59 {
-        return Err("You can't specify more then 59 minutes in hh:mm format".to_string());
+        return Err("You can't specify more than 59 minutes in hh:mm format".to_string());
     }
 
     Ok(Duration::hours(hours) + Duration::minutes(minutes))
