@@ -1,5 +1,5 @@
 use rodio::source::{SineWave, Source};
-use rodio::{OutputStreamBuilder, Sink};
+use rodio::{DeviceSinkBuilder, Player};
 use std::time::Duration;
 
 const BEEP_FREQUENCY: f32 = 440.0;
@@ -9,11 +9,11 @@ pub fn beep() {
     let source = SineWave::new(BEEP_FREQUENCY)
         .take_duration(Duration::from_secs_f32(BEEP_DURATION))
         .amplify(0.50);
-    let mut stream_handle =
-        OutputStreamBuilder::open_default_stream().expect("Failed to open audio output stream");
-    stream_handle.log_on_drop(false);
-    let sink = Sink::connect_new(&stream_handle.mixer());
+    let mut device_sink =
+        DeviceSinkBuilder::open_default_sink().expect("Failed to open audio output stream");
+    device_sink.log_on_drop(false);
+    let player = Player::connect_new(&device_sink.mixer());
 
-    sink.append(source);
-    sink.sleep_until_end();
+    player.append(source);
+    player.sleep_until_end();
 }
